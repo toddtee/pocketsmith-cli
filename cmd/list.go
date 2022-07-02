@@ -1,4 +1,5 @@
 /*
+Package cmd provides a command line application for Pocketsmith.
 Copyright © 2022 Todd Turner hi@toddtee.sh
 
 */
@@ -15,8 +16,8 @@ import (
 )
 
 type config struct {
-	User_id string
-	Api_key string
+	UserID string
+	APIKey string
 }
 
 func getConfig() config {
@@ -24,20 +25,20 @@ func getConfig() config {
 	if user == "" {
 		user = viper.GetString("user_id")
 	}
-	api_key, _ := rootCmd.Flags().GetString("api_key")
-	if api_key == "" {
-		api_key = viper.GetString("api_key")
+	apiKey, _ := rootCmd.Flags().GetString("api-key")
+	if apiKey == "" {
+		apiKey = viper.GetString("api_key")
 	}
 
-	c := config{User_id: user, Api_key: api_key}
+	c := config{UserID: user, APIKey: apiKey}
 	return c
 }
 
-//getAccounts lists bank accounts added to the pocketsmith account
+// getAccounts lists bank accounts added to the pocketsmith account
 func getAccounts(cmd *cobra.Command, args []string) {
 	c := getConfig()
-	url := fmt.Sprintf("https://api.pocketsmith.com/v2/users/%v/accounts", c.User_id)
-	d := wiring.HttpRequest(url, c.Api_key)
+	url := fmt.Sprintf("https://api.pocketsmith.com/v2/users/%v/accounts", c.UserID)
+	d := wiring.HTTPRequest(url, c.APIKey)
 	fmt.Printf("%v", string(d))
 }
 
@@ -45,7 +46,7 @@ func getAuthorisedUser(cmd *cobra.Command, args []string) {
 	c := getConfig()
 	user := pocketsmith.User{}
 	url := "https://api.pocketsmith.com/v2/me"
-	d := wiring.HttpRequest(url, c.Api_key)
+	d := wiring.HTTPRequest(url, c.APIKey)
 	err := json.Unmarshal(d, &user)
 	if err != nil {
 		panic("Was unable to unmarshal user data to user struct.")

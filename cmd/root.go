@@ -1,4 +1,5 @@
 /*
+Package cmd provides a command line application for Pocketsmith.
 Copyright © 2022 Todd Turner hi@toddtee.sh
 
 */
@@ -16,7 +17,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "pocketsmith",
 	Short: "pocketsmith-cli interacts with your pocketsmith account",
-	Long: `pocketsmith-cli is a commandline application for interacting with your pocketsmith account.
+	Long: `pocketsmith-cli is a command line application for interacting with your pocketsmith account.
 	
 Built in Go and with much love, the pocketsmith-cli allows programmatic access to your pocketsmith account and all that is contained within it. This application is built in conjunction with the pocketsmith api.
 Eat it up you finance nerds.`,
@@ -31,7 +32,7 @@ func Execute() {
 	}
 }
 
-//initConfig sets up the configuration for the user
+// initConfig sets up the configuration for the user
 func initConfig() {
 	viper.AddConfigPath("$HOME")
 	viper.SetConfigType("yaml")
@@ -53,10 +54,10 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	viper.BindPFlag("api_key", rootCmd.PersistentFlags().Lookup("api_key"))
+	viper.BindPFlag("api-key", rootCmd.PersistentFlags().Lookup("api-key"))
 	viper.BindPFlag("user", rootCmd.PersistentFlags().Lookup("user"))
 
 	// Config file supported flags with Viper.
-	rootCmd.PersistentFlags().StringP("api_key", "a", "", "Developer API Key")
+	rootCmd.PersistentFlags().StringP("api-key", "a", "", "Developer API Key")
 	rootCmd.PersistentFlags().StringP("user", "u", "", "Authorised user ID")
 }

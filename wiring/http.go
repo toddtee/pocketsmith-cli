@@ -6,10 +6,11 @@ import (
 	"net/http"
 )
 
-func HttpRequest(url string, api_key string) []byte {
+// HTTPRequest makes HTTP requests
+func HTTPRequest(url string, apiKey string) []byte {
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/json")
-	req.Header.Add("X-Developer-Key", api_key)
+	req.Header.Add("X-Developer-Key", apiKey)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		panic("HTTP Request Failed.")
@@ -18,12 +19,13 @@ func HttpRequest(url string, api_key string) []byte {
 		StatusHelper(resp)
 	}
 	defer resp.Body.Close()
-	d := GetResponseBody(resp)
+	d := getResponseBody(resp)
 	return d
 }
 
+// StatusHelper outputs appropriate error messages to user based on the HTTP response status code.
 func StatusHelper(resp *http.Response) {
-	b := GetResponseBody(resp)
+	b := getResponseBody(resp)
 	if resp.StatusCode == http.StatusUnauthorized {
 		fmt.Printf("ERROR %v: Please check API Key!\n%s\n", resp.StatusCode, b)
 	}
@@ -32,7 +34,7 @@ func StatusHelper(resp *http.Response) {
 	}
 }
 
-func GetResponseBody(resp *http.Response) []byte {
+func getResponseBody(resp *http.Response) []byte {
 	body, _ := ioutil.ReadAll(resp.Body)
 	return body
 }
