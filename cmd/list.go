@@ -7,12 +7,11 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/toddtee/pocketsmith-cli/pocketsmith"
+	"github.com/toddtee/pocketsmith-cli/wiring"
 )
 
 type config struct {
@@ -38,36 +37,18 @@ func getConfig() config {
 func getAccounts(cmd *cobra.Command, args []string) {
 	c := getConfig()
 	url := fmt.Sprintf("https://api.pocketsmith.com/v2/users/%v/accounts", c.User_id)
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("X-Developer-Key", c.Api_key)
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		fmt.Println("Was unable to list account details.")
-	}
-	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
-	fmt.Println(res)
-	fmt.Println(string(body))
+	d := wiring.HttpRequest(url, c.Api_key)
+	fmt.Printf("%v", string(d))
 }
 
 func getAuthorisedUser(cmd *cobra.Command, args []string) {
 	c := getConfig()
 	user := pocketsmith.User{}
 	url := "https://api.pocketsmith.com/v2/me"
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("X-Developer-Key", c.Api_key)
-	res, err := http.DefaultClient.Do(req)
+	d := wiring.HttpRequest(url, c.Api_key)
+	err := json.Unmarshal(d, &user)
 	if err != nil {
-		fmt.Println("Was unable to get user.")
-	}
-	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
-	b := []byte(body)
-	err = json.Unmarshal(b, &user)
-	if err != nil {
-		fmt.Println("Was unable to unmarshal user data to user struct.")
+		panic("Was unable to unmarshal user data to user struct.")
 	}
 	fmt.Println(user.Name)
 }
