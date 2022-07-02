@@ -16,8 +16,9 @@ import (
 )
 
 type config struct {
-	UserID string
-	APIKey string
+	UserID  string
+	APIKey  string
+	BaseURL string
 }
 
 func getConfig() config {
@@ -30,14 +31,16 @@ func getConfig() config {
 		apiKey = viper.GetString("api_key")
 	}
 
-	c := config{UserID: user, APIKey: apiKey}
+	b := "https://api.pocketsmith.com/v2"
+
+	c := config{UserID: user, APIKey: apiKey, BaseURL: b}
 	return c
 }
 
 // getAccounts lists bank accounts added to the pocketsmith account
 func getAccounts(cmd *cobra.Command, args []string) {
 	c := getConfig()
-	url := fmt.Sprintf("https://api.pocketsmith.com/v2/users/%v/accounts", c.UserID)
+	url := fmt.Sprintf("%v/users/%v/accounts", c.BaseURL, c.UserID)
 	d := wiring.HTTPRequest(url, c.APIKey)
 	fmt.Printf("%v", string(d))
 }
@@ -45,7 +48,7 @@ func getAccounts(cmd *cobra.Command, args []string) {
 func getAuthorisedUser(cmd *cobra.Command, args []string) {
 	c := getConfig()
 	user := pocketsmith.User{}
-	url := "https://api.pocketsmith.com/v2/me"
+	url := fmt.Sprintf("%v/me", c.BaseURL)
 	d := wiring.HTTPRequest(url, c.APIKey)
 	err := json.Unmarshal(d, &user)
 	if err != nil {
