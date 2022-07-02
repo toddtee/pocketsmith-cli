@@ -2,31 +2,6 @@ package pocketsmith
 
 import "time"
 
-type PrimaryTransactionAccount struct {
-	ID                           int         `json:"id"`
-	Name                         string      `json:"name"`
-	Number                       string      `json:"number"`
-	CurrentBalance               float64     `json:"current_balance"`
-	CurrentBalanceDate           string      `json:"current_balance_date"`
-	CurrentBalanceInBaseCurrency float64     `json:"current_balance_in_base_currency"`
-	CurrentBalanceExchangeRate   float64     `json:"current_balance_exchange_rate"`
-	SafeBalance                  float64     `json:"safe_balance"`
-	SafeBalanceInBaseCurrency    float64     `json:"safe_balance_in_base_currency"`
-	StartingBalance              float64     `json:"starting_balance"`
-	StartingBalanceDate          string      `json:"starting_balance_date"`
-	CreatedAt                    time.Time   `json:"created_at"`
-	UpdatedAt                    time.Time   `json:"updated_at"`
-	Institution                  Institution `json:"institution"`
-}
-
-type Institution struct {
-	CurrencyCode string    `json:"currency_code"`
-	Title        string    `json:"title"`
-	UpdatedAt    time.Time `json:"updated_at"`
-	CreatedAt    time.Time `json:"created_at"`
-	ID           int       `json:"id"`
-}
-
 type Account struct {
 	ID                           int                       `json:"id"`
 	Title                        string                    `json:"title"`
@@ -45,6 +20,30 @@ type Account struct {
 	CurrentBalanceExchangeRate   float64                   `json:"current_balance_exchange_rate"`
 	SafeBalance                  float64                   `json:"safe_balance"`
 	SafeBalanceInBaseCurrency    float64                   `json:"safe_balance_in_base_currency"`
+}
+type Institution struct {
+	CurrencyCode string    `json:"currency_code"`
+	Title        string    `json:"title"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	CreatedAt    time.Time `json:"created_at"`
+	ID           int       `json:"id"`
+}
+
+type PrimaryTransactionAccount struct {
+	ID                           int         `json:"id"`
+	Name                         string      `json:"name"`
+	Number                       string      `json:"number"`
+	CurrentBalance               float64     `json:"current_balance"`
+	CurrentBalanceDate           string      `json:"current_balance_date"`
+	CurrentBalanceInBaseCurrency float64     `json:"current_balance_in_base_currency"`
+	CurrentBalanceExchangeRate   float64     `json:"current_balance_exchange_rate"`
+	SafeBalance                  float64     `json:"safe_balance"`
+	SafeBalanceInBaseCurrency    float64     `json:"safe_balance_in_base_currency"`
+	StartingBalance              float64     `json:"starting_balance"`
+	StartingBalanceDate          string      `json:"starting_balance_date"`
+	CreatedAt                    time.Time   `json:"created_at"`
+	UpdatedAt                    time.Time   `json:"updated_at"`
+	Institution                  Institution `json:"institution"`
 }
 
 type PrimaryScenario struct {
@@ -70,34 +69,6 @@ type PrimaryScenario struct {
 	CreatedAt                    time.Time `json:"created_at"`
 	UpdatedAt                    time.Time `json:"updated_at"`
 }
-
-type TransactionAccounts struct {
-	TransactionAccounts []TransactionAccount
-}
-
-type TransactionAccount struct {
-	ID                           int         `json:"id"`
-	Name                         string      `json:"name"`
-	Number                       string      `json:"number"`
-	CurrentBalance               float64     `json:"current_balance"`
-	CurrentBalanceDate           string      `json:"current_balance_date"`
-	CurrentBalanceInBaseCurrency float64     `json:"current_balance_in_base_currency"`
-	CurrentBalanceExchangeRate   float64     `json:"current_balance_exchange_rate"`
-	SafeBalance                  float64     `json:"safe_balance"`
-	SafeBalanceInBaseCurrency    float64     `json:"safe_balance_in_base_currency"`
-	StartingBalance              float64     `json:"starting_balance"`
-	StartingBalanceDate          string      `json:"starting_balance_date"`
-	CreatedAt                    time.Time   `json:"created_at"`
-	UpdatedAt                    time.Time   `json:"updated_at"`
-	Institution                  Institution `json:"institution"`
-	CurrencyCode                 string      `json:"currency_code"`
-	Type                         string      `json:"type"`
-}
-
-type Scenarios struct {
-	Scenarios []Scenario
-}
-
 type Scenario struct {
 	ID                           int       `json:"id"`
 	Title                        string    `json:"title"`
@@ -120,6 +91,31 @@ type Scenario struct {
 	SafeBalanceInBaseCurrency    float64   `json:"safe_balance_in_base_currency"`
 	CreatedAt                    time.Time `json:"created_at"`
 	UpdatedAt                    time.Time `json:"updated_at"`
+}
+type Scenarios struct {
+	Scenarios []Scenario
+}
+
+type TransactionAccount struct {
+	ID                           int         `json:"id"`
+	Name                         string      `json:"name"`
+	Number                       string      `json:"number"`
+	CurrentBalance               float64     `json:"current_balance"`
+	CurrentBalanceDate           string      `json:"current_balance_date"`
+	CurrentBalanceInBaseCurrency float64     `json:"current_balance_in_base_currency"`
+	CurrentBalanceExchangeRate   float64     `json:"current_balance_exchange_rate"`
+	SafeBalance                  float64     `json:"safe_balance"`
+	SafeBalanceInBaseCurrency    float64     `json:"safe_balance_in_base_currency"`
+	StartingBalance              float64     `json:"starting_balance"`
+	StartingBalanceDate          string      `json:"starting_balance_date"`
+	CreatedAt                    time.Time   `json:"created_at"`
+	UpdatedAt                    time.Time   `json:"updated_at"`
+	Institution                  Institution `json:"institution"`
+	CurrencyCode                 string      `json:"currency_code"`
+	Type                         string      `json:"type"`
+}
+type TransactionAccounts struct {
+	TransactionAccounts []TransactionAccount
 }
 
 type User struct {
