@@ -1,0 +1,4 @@
+---
+#Rename this file to .pocketsmith, update these values and add to your $HOME directory.
+api_key: "123myAPIkey123"
+user_id: "42"

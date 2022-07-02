@@ -33,9 +33,9 @@ func Execute() {
 
 //initConfig sets up the configuration for the user
 func initConfig() {
-	viper.AddConfigPath(".")
+	viper.AddConfigPath("$HOME")
 	viper.SetConfigType("yaml")
-	viper.SetConfigName(".config")
+	viper.SetConfigName(".pocketsmith")
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(fmt.Sprintf("Couldn't read in config %v", err))
