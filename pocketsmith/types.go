@@ -1,6 +1,23 @@
 package pocketsmith
 
-import "time"
+import (
+	"net/http"
+	"time"
+)
+
+type Doer interface {
+	Do(*http.Request) (*http.Response, error)
+}
+type Client struct {
+	HTTPClient Doer
+	Config     *Config
+}
+
+type Config struct {
+	BaseURL string
+	User    string
+	APIKey  string
+}
 
 type Account struct {
 	ID                           int                       `json:"id"`
@@ -144,3 +161,11 @@ type User struct {
 	Created_at                 string `json:"created_at"`
 	Updated_at                 string `json:"updated_at"`
 }
+
+const (
+	BaseURL = "https://api.pocketsmith.com/v2"
+)
+
+const (
+	ResourceType = "application/json; charset=utf-8"
+)

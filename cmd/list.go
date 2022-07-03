@@ -8,53 +8,44 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"github.com/toddtee/pocketsmith-cli/pocketsmith"
-	"github.com/toddtee/pocketsmith-cli/wiring"
 )
-
-type config struct {
-	UserID  string
-	APIKey  string
-	BaseURL string
-}
-
-func getConfig() config {
-	user, _ := rootCmd.Flags().GetString("user")
-	if user == "" {
-		user = viper.GetString("user_id")
-	}
-	apiKey, _ := rootCmd.Flags().GetString("api-key")
-	if apiKey == "" {
-		apiKey = viper.GetString("api_key")
-	}
-
-	b := "https://api.pocketsmith.com/v2"
-
-	c := config{UserID: user, APIKey: apiKey, BaseURL: b}
-	return c
-}
 
 // getAccounts lists bank accounts added to the pocketsmith account
 func getAccounts(cmd *cobra.Command, args []string) {
-	c := getConfig()
-	url := fmt.Sprintf("%v/users/%v/accounts", c.BaseURL, c.UserID)
-	d := wiring.HTTPRequest(url, c.APIKey)
-	fmt.Printf("%v", string(d))
+	cl := pocketsmith.New()
+	fmt.Printf("base url %v, apikey %v, user %v,", cl.Config.BaseURL, cl.Config.APIKey, cl.Config.User)
+	path := fmt.Sprintf("/users/%v/accounts", cl.Config.User)
+	reader, err := cl.SendRequest(path, http.MethodGet, nil)
+	if err != nil {
+		fmt.Println("woops")
+	}
+	// The below block needs to be extracted to a json decoder and passed to a "print result" function.
+	defer reader.Close()
+	body, _ := ioutil.ReadAll(reader)
+	fmt.Printf("%s", string(body))
 }
 
 func getAuthorisedUser(cmd *cobra.Command, args []string) {
-	c := getConfig()
-	user := pocketsmith.User{}
-	url := fmt.Sprintf("%v/me", c.BaseURL)
-	d := wiring.HTTPRequest(url, c.APIKey)
-	err := json.Unmarshal(d, &user)
+	u := pocketsmith.User{}
+	cl := pocketsmith.New()
+	path := fmt.Sprint("/me")
+	reader, err := cl.SendRequest(path, http.MethodGet, nil)
+	if err != nil {
+		fmt.Println("woops")
+	}
+	// The below block needs to be extracted to a json decoder and passed to a "print result" function.
+	defer reader.Close()
+	body, _ := ioutil.ReadAll(reader)
+	err = json.Unmarshal(body, &u)
 	if err != nil {
 		panic("Was unable to unmarshal user data to user struct.")
 	}
-	fmt.Println(user.Name)
+	fmt.Println(u.Name)
 }
 
 // getCmd represents the list command
