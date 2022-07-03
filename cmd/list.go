@@ -18,7 +18,6 @@ import (
 // getAccounts lists bank accounts added to the pocketsmith account
 func getAccounts(cmd *cobra.Command, args []string) {
 	cl := pocketsmith.New()
-	fmt.Printf("base url %v, apikey %v, user %v,", cl.Config.BaseURL, cl.Config.APIKey, cl.Config.User)
 	path := fmt.Sprintf("/users/%v/accounts", cl.Config.User)
 	reader, err := cl.SendRequest(path, http.MethodGet, nil)
 	if err != nil {
