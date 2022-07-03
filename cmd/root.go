@@ -6,11 +6,11 @@ Copyright © 2022 Todd Turner hi@toddtee.sh
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/toddtee/pocketsmith-cli/config"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -32,32 +32,16 @@ func Execute() {
 	}
 }
 
-// initConfig sets up the configuration for the user
-func initConfig() {
-	viper.AddConfigPath("$HOME")
-	viper.SetConfigType("yaml")
-	viper.SetConfigName(".pocketsmith")
-	err := viper.ReadInConfig()
-	if err != nil {
-		panic(fmt.Sprintf("Couldn't read in config %v", err))
-	}
-}
-
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(config.InitConfig)
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pocketsmith-cli.yaml)")
+	rootCmd.PersistentFlags().StringP("config", "c", "", "config file (default is $HOME/.pocketsmith)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	viper.BindPFlag("api-key", rootCmd.PersistentFlags().Lookup("api-key"))
-	viper.BindPFlag("user", rootCmd.PersistentFlags().Lookup("user"))
-
-	// Config file supported flags with Viper.
-	rootCmd.PersistentFlags().StringP("api-key", "a", "", "Developer API Key")
-	rootCmd.PersistentFlags().StringP("user", "u", "", "Authorised user ID")
+	viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
 }
