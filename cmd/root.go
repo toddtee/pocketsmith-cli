@@ -10,7 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/toddtee/pocketsmith-cli/config"
+	"github.com/toddtee/pocketsmith-cli/internal/app"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -33,7 +33,7 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(config.InitConfig)
+	cobra.OnInitialize(app.InitConfig)
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.

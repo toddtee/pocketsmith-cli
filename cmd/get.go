@@ -8,39 +8,19 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 
 	"github.com/spf13/cobra"
-	"github.com/toddtee/pocketsmith-cli/pocketsmith"
+	"github.com/toddtee/pocketsmith-cli/internal/app"
 )
 
-// getAccounts lists bank accounts added to the pocketsmith account
-func getAccounts(cmd *cobra.Command, args []string) {
-	cl := pocketsmith.New()
-	path := fmt.Sprintf("/users/%v/accounts", cl.Config.User)
-	reader, err := cl.SendRequest(path, http.MethodGet, nil)
-	if err != nil {
-		fmt.Println("woops")
-	}
-	// The below block needs to be extracted to a json decoder and passed to a "print result" function.
-	defer reader.Close()
-	body, _ := ioutil.ReadAll(reader)
-	fmt.Printf("%s", string(body))
-}
-
 func getAuthorisedUser(cmd *cobra.Command, args []string) {
-	u := pocketsmith.User{}
-	cl := pocketsmith.New()
-	path := fmt.Sprint("/me")
-	reader, err := cl.SendRequest(path, http.MethodGet, nil)
-	if err != nil {
-		fmt.Println("woops")
-	}
-	// The below block needs to be extracted to a json decoder and passed to a "print result" function.
-	defer reader.Close()
-	body, _ := ioutil.ReadAll(reader)
-	err = json.Unmarshal(body, &u)
+	u := app.User{}
+	cfg := app.BuildConfig()
+	resp := app.AuthorisedUser(cfg)
+	defer resp.Body.Close()
+	d := getBodyData(resp.Body)
+
+	err := json.Unmarshal(d, &u)
 	if err != nil {
 		panic("Was unable to unmarshal user data to user struct.")
 	}
@@ -54,13 +34,6 @@ var getCmd = &cobra.Command{
 	Long:  `prints some import information about the specified pocketsmith resource.`,
 }
 
-var getAccountsCmd = &cobra.Command{
-	Use:   "accounts", // Need to add a better  [-F file | -D dir]... [-f format] profile
-	Short: "retrieves bank account/s associated with the pocketsmith account",
-	Long:  `shows where the gold is kept`,
-	Run:   getAccounts,
-}
-
 var getAuthorisedUserCmd = &cobra.Command{
 	Use:   "user", // Need to add a better  [-F file | -D dir]... [-f format] profile
 	Short: "retrieves the authorised user of the pocketsmith account",
@@ -70,7 +43,6 @@ var getAuthorisedUserCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(getCmd)
-	getCmd.AddCommand(getAccountsCmd)
 	getCmd.AddCommand(getAuthorisedUserCmd)
 
 	// Here you will define your flags and configuration settings.
