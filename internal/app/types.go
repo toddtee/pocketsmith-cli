@@ -1,4 +1,4 @@
-package pocketsmith
+package app
 
 import (
 	"net/http"
