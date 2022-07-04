@@ -1,17 +1,22 @@
 package app
 
 import (
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test(t *testing.T) {
 	testCases := map[string]struct {
 		path string
+		user string
 	}{
-		"Everything OK": {
+		"Get Autorised User": {
 			path: "/me",
+			user: "Monty Burns",
 		},
 	}
 	for name, tt := range testCases {
@@ -21,15 +26,17 @@ func Test(t *testing.T) {
 				if rp != tt.path {
 					t.Errorf("Expected request path %v, got %v", tt.path, rp)
 				}
-				//		w.Write()
+				w.Write([]byte(tt.user))
 			}))
 			defer svr.Close()
 			cfg := BuildConfig()
 			cfg.BaseURL = svr.URL
 
-			AuthorisedUser(cfg)
+			resp := AuthorisedUser(cfg)
+			d, _ := ioutil.ReadAll(resp.Body)
+			got := string(d)
 
-			// assert.Equal(t, tt.path, r.URL.Path, "should be equal")
+			assert.Equal(t, tt.user, got, "should be equal")
 		})
 	}
 }
