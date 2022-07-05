@@ -1,22 +1,24 @@
 package app
 
 import (
-	"net/http"
+	"fmt"
+	"strings"
 	"time"
 )
-
-type Doer interface {
-	Do(*http.Request) (*http.Response, error)
-}
-type Client struct {
-	HTTPClient Doer
-	Config     *Config
-}
 
 type Config struct {
 	BaseURL string
 	User    string
 	APIKey  string
+}
+
+func (c Config) String() string {
+	var b strings.Builder
+	fmt.Fprintf(&b, "BaseURL: %v\n", c.BaseURL)
+	fmt.Fprintf(&b, "User: %v\n", c.User)
+	fmt.Fprintf(&b, "Api Key: %v\n", c.APIKey)
+
+	return b.String()
 }
 
 type Account struct {
@@ -160,6 +162,14 @@ type User struct {
 	Last_activity_at           string `json:"last_activity_at"`
 	Created_at                 string `json:"created_at"`
 	Updated_at                 string `json:"updated_at"`
+}
+
+func (u User) String() string {
+	var b strings.Builder
+	fmt.Fprintf(&b, "Name: %v\n", u.Name)
+	fmt.Fprintf(&b, "Email: %v", u.Email)
+
+	return b.String()
 }
 
 const (

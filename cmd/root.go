@@ -6,6 +6,7 @@ Copyright © 2022 Todd Turner hi@toddtee.sh
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -28,6 +29,7 @@ Eat it up you finance nerds.`,
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 }
@@ -37,11 +39,10 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-
+	rootCmd.AddCommand(getCmd)
 	rootCmd.PersistentFlags().StringP("config", "c", "", "config file (default is $HOME/.pocketsmith)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
 }
