@@ -24,9 +24,12 @@ var getAuthorisedUserCmd = &cobra.Command{
 	Short: "retrieves the authorised user of the pocketsmith account",
 	Long:  `reveals who is the supreme overlord of the household finances.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := app.GetAuthorisedUser(); err != nil {
+		c := app.NewClient()
+		u, err := c.GetAuthorisedUser()
+		if err != nil {
 			return fmt.Errorf("unable to get authorised user: %w", err)
 		}
+		printer(u)
 		return nil
 	},
 }

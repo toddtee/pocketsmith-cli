@@ -11,7 +11,7 @@ import (
 )
 
 // InitConfig sets up the configuration for the user
-func InitConfig() {
+func InitConfig() error {
 	if viper.GetString("config") != "" {
 		viper.SetConfigFile(viper.GetString("config"))
 	} else {
@@ -22,57 +22,56 @@ func InitConfig() {
 	err := viper.ReadInConfig()
 	// viper.Unmarshal()
 	if err != nil {
-		fmt.Errorf("couldn't read in config %w", err)
+		return fmt.Errorf("couldn't read in config %w", err)
 	}
+	return nil
 }
 
-// BuildConfig for the Pocketsmith API HTTP request
-func BuildConfig() *Config {
-	cfg := &Config{
-		BaseURL: BaseURL,
-		User:    viper.GetString("user_id"),
-		APIKey:  viper.GetString("api_key"),
-	}
-
-	return cfg
+// NewClient for the Pocketsmith API HTTP request
+func NewClient() Client {
+	var c Client
+	c.BaseURL = BaseURL
+	c.User = viper.GetString("user_id")
+	c.APIKey = viper.GetString("api_key")
+	return c
 }
 
-// SendRequest sends a HTTP request to the Pocketsmith API
-func SendRequest(cfg *Config, path string, method string, body io.Reader) (*http.Response, error) {
-	url := fmt.Sprintf("%v%v", cfg.BaseURL, path)
+// sendRequest to the Pocketsmith API
+func (c *Client) sendRequest(path string, method string, body io.Reader) (*http.Response, error) {
+	url := fmt.Sprintf("%v%v", c.BaseURL, path)
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
-		fmt.Errorf("unable to create a new request: %w", err)
-		return nil, err
+		return nil, fmt.Errorf("unable to create a new request: %w", err)
 	}
 
-	req.Header.Add("X-Developer-Key", cfg.APIKey)
+	req.Header.Add("X-Developer-Key", c.APIKey)
 	req.Header.Set("Content-Type", ResourceType)
 	req.Header.Set("Accept", ResourceType)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Errorf("unable to do request: %w", err)
-		return nil, err
+		return nil, fmt.Errorf("unable to do request: %w", err)
 	}
 
 	return resp, nil
 }
 
-func GetAuthorisedUser() error {
-	u := User{}
-	cfg := BuildConfig()
+// GetAuthorisedUser gets the authorised user of the Pocketsmith account
+func (c *Client) GetAuthorisedUser() (*User, error) {
+	u := &User{}
 	path := "/me"
-	resp, err := SendRequest(cfg, path, http.MethodGet, nil)
+	resp, err := c.sendRequest(path, http.MethodGet, nil)
 	if err != nil {
-		return fmt.Errorf("unable to send request: %w", err)
+		return u, fmt.Errorf("unable to send request: %w", err)
 	}
+	responseHandler(resp, u)
+	return u, nil
+}
+
+func responseHandler(resp *http.Response, v interface{}) {
 	defer resp.Body.Close()
 	d := getBodyData(resp.Body)
-	unmarshal(d, &u)
-
-	fmt.Println(&u)
-	return nil
+	unmarshal(d, v)
 }
 
 func getBodyData(r io.Reader) (d []byte) {
@@ -80,9 +79,10 @@ func getBodyData(r io.Reader) (d []byte) {
 	return d
 }
 
-func unmarshal(d []byte, v interface{}) {
-	err := json.Unmarshal(d, &v)
+func unmarshal(d []byte, v interface{}) error {
+	err := json.Unmarshal(d, v)
 	if err != nil {
-		fmt.Errorf("unable to send request: %w", err)
+		return fmt.Errorf("unable to send request: %w", err)
 	}
+	return nil
 }

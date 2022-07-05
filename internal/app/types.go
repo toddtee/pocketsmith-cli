@@ -6,13 +6,14 @@ import (
 	"time"
 )
 
-type Config struct {
+// Client for Pocketsmith API
+type Client struct {
 	BaseURL string
 	User    string
 	APIKey  string
 }
 
-func (c Config) String() string {
+func (c Client) String() string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "BaseURL: %v\n", c.BaseURL)
 	fmt.Fprintf(&b, "User: %v\n", c.User)
