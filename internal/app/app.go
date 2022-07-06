@@ -10,6 +10,15 @@ import (
 	"github.com/spf13/viper"
 )
 
+// NewClient for the Pocketsmith API HTTP request
+func NewClient() Client {
+	var c Client
+	c.BaseURL = BaseURL
+	c.User = viper.GetString("user_id")
+	c.APIKey = viper.GetString("api_key")
+	return c
+}
+
 // InitConfig sets up the configuration for the user
 func InitConfig() error {
 	if viper.GetString("config") != "" {
@@ -25,35 +34,6 @@ func InitConfig() error {
 		return fmt.Errorf("couldn't read in config %w", err)
 	}
 	return nil
-}
-
-// NewClient for the Pocketsmith API HTTP request
-func NewClient() Client {
-	var c Client
-	c.BaseURL = BaseURL
-	c.User = viper.GetString("user_id")
-	c.APIKey = viper.GetString("api_key")
-	return c
-}
-
-// sendRequest to the Pocketsmith API
-func (c *Client) sendRequest(path string, method string, body io.Reader) (*http.Response, error) {
-	url := fmt.Sprintf("%v%v", c.BaseURL, path)
-	req, err := http.NewRequest(method, url, body)
-	if err != nil {
-		return nil, fmt.Errorf("unable to create a new request: %w", err)
-	}
-
-	req.Header.Add("X-Developer-Key", c.APIKey)
-	req.Header.Set("Content-Type", ResourceType)
-	req.Header.Set("Accept", ResourceType)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("unable to do request: %w", err)
-	}
-
-	return resp, nil
 }
 
 // GetUser gets the authorised user of the Pocketsmith account
@@ -75,6 +55,26 @@ func (c *Client) GetUser(auth bool) (*User, error) {
 		return nil, fmt.Errorf("%w", err)
 	}
 	return u, nil
+}
+
+// sendRequest to the Pocketsmith API
+func (c *Client) sendRequest(path string, method string, body io.Reader) (*http.Response, error) {
+	url := fmt.Sprintf("%v%v", c.BaseURL, path)
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create a new request: %w", err)
+	}
+
+	req.Header.Add("X-Developer-Key", c.APIKey)
+	req.Header.Set("Content-Type", ResourceType)
+	req.Header.Set("Accept", ResourceType)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("unable to do request: %w", err)
+	}
+
+	return resp, nil
 }
 
 func responseHandler(resp *http.Response, v interface{}) error {
