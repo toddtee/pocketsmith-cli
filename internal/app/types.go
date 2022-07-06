@@ -180,8 +180,8 @@ type User struct {
 
 func (u User) String() string {
 	var b strings.Builder
-	fmt.Fprintf(&b, "Name: %v\n", u.Name)
-	fmt.Fprintf(&b, "Email: %v", u.Email)
+	fmt.Fprintf(&b, "Name: %s\n", u.Name)
+	fmt.Fprintf(&b, "Email: %s", u.Email)
 
 	return b.String()
 }

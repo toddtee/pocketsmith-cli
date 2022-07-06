@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// APIError is a custom error to raise when Pocketsmith API returns a non-200 response code.
 type APIError struct {
 	Message string
 }
