@@ -22,6 +22,7 @@ func (c Client) String() string {
 	return b.String()
 }
 
+// Account represents a Pocketsmith account summary
 type Account struct {
 	ID                           int                       `json:"id"`
 	Title                        string                    `json:"title"`
@@ -41,6 +42,8 @@ type Account struct {
 	SafeBalance                  float64                   `json:"safe_balance"`
 	SafeBalanceInBaseCurrency    float64                   `json:"safe_balance_in_base_currency"`
 }
+
+// Institution represents a financial institution
 type Institution struct {
 	CurrencyCode string    `json:"currency_code"`
 	Title        string    `json:"title"`
@@ -49,6 +52,7 @@ type Institution struct {
 	ID           int       `json:"id"`
 }
 
+// PrimaryTransactionAccount represents the primary transaction account associated with the Pocketsmith account
 type PrimaryTransactionAccount struct {
 	ID                           int         `json:"id"`
 	Name                         string      `json:"name"`
@@ -66,6 +70,7 @@ type PrimaryTransactionAccount struct {
 	Institution                  Institution `json:"institution"`
 }
 
+// PrimaryScenario defines the primary forecasting scenario associated with the primary transaction account
 type PrimaryScenario struct {
 	ID                           int       `json:"id"`
 	Title                        string    `json:"title"`
@@ -89,6 +94,8 @@ type PrimaryScenario struct {
 	CreatedAt                    time.Time `json:"created_at"`
 	UpdatedAt                    time.Time `json:"updated_at"`
 }
+
+// Scenario defines a forecasting scenario
 type Scenario struct {
 	ID                           int       `json:"id"`
 	Title                        string    `json:"title"`
@@ -112,10 +119,13 @@ type Scenario struct {
 	CreatedAt                    time.Time `json:"created_at"`
 	UpdatedAt                    time.Time `json:"updated_at"`
 }
+
+// Scenarios is a list of forecasting scenarios created within the Pocketsmith Account
 type Scenarios struct {
 	Scenarios []Scenario
 }
 
+// TransactionAccount defines a banking transaction account
 type TransactionAccount struct {
 	ID                           int         `json:"id"`
 	Name                         string      `json:"name"`
@@ -134,35 +144,38 @@ type TransactionAccount struct {
 	CurrencyCode                 string      `json:"currency_code"`
 	Type                         string      `json:"type"`
 }
+
+// TransactionAccounts defines a list of banking transaction accounts
 type TransactionAccounts struct {
 	TransactionAccounts []TransactionAccount
 }
 
+// User defines a Pocketsmith user
 type User struct {
-	Id                         int    `json:"id"`
-	Login                      string `json:"login"`
-	Name                       string `json:"name"`
-	Email                      string `json:"email"`
-	Avatar_url                 string `json:"avatar_url"`
-	Beta_user                  bool   `json:"beta_user"`
-	Time_zone                  string `json:"time_zone"`
-	Week_start_day             int    `json:"week_start_day"`
-	Is_reviewing_transactions  bool   `json:"is_reviewing_transactions"`
-	Base_currency_code         string `json:"base_currency_code"`
-	Always_show_base_currency  bool   `json:"always_show_base_currency"`
-	Using_multiple_currencies  bool   `json:"using_multiple_currencies"`
-	Available_accounts         int    `json:"available_accounts"`
-	Available_budgets          int    `json:"available_budgets"`
-	Forecast_last_updated_at   string `json:"forecast_last_updated_at"`
-	Forecast_last_accessed_at  string `json:"forecast_last_accessed_at"`
-	Forecast_start_date        string `json:"forecast_start_date"`
-	Forecast_end_date          string `json:"forecast_end_date"`
-	Forecast_defer_recalculate bool   `json:"forecast_defer_recalculate"`
-	Forecast_needs_recalculate bool   `json:"forecast_needs_recalculate"`
-	Last_logged_in_at          string `json:"last_logged_in_at"`
-	Last_activity_at           string `json:"last_activity_at"`
-	Created_at                 string `json:"created_at"`
-	Updated_at                 string `json:"updated_at"`
+	ID                       int    `json:"id"`
+	Login                    string `json:"login"`
+	Name                     string `json:"name"`
+	Email                    string `json:"email"`
+	AvatarURL                string `json:"avatar_url"`
+	BetaUser                 bool   `json:"beta_user"`
+	TimeZone                 string `json:"time_zone"`
+	WeekStartDay             int    `json:"week_start_day"`
+	IsReviewingTransactions  bool   `json:"is_reviewing_transactions"`
+	BaseCurrencyCode         string `json:"base_currency_code"`
+	AlwaysShowBaseCurrency   bool   `json:"always_show_base_currency"`
+	UsingMultipleCurrencies  bool   `json:"using_multiple_currencies"`
+	AvailableAccounts        int    `json:"available_accounts"`
+	AvailableBudgets         int    `json:"available_budgets"`
+	ForecastLastUpdatedAt    string `json:"forecast_last_updated_at"`
+	ForecastLastAccessedAt   string `json:"forecast_last_accessed_at"`
+	ForecastStartDate        string `json:"forecast_start_date"`
+	ForecastEndDate          string `json:"forecast_end_date"`
+	ForecastDeferRecalculate bool   `json:"forecast_defer_recalculate"`
+	ForecastNeedsRecalculate bool   `json:"forecast_needs_recalculate"`
+	LastLoggedInAt           string `json:"last_logged_in_at"`
+	LastActivityAt           string `json:"last_activity_at"`
+	CreatedAt                string `json:"created_at"`
+	UpdatedAt                string `json:"updated_at"`
 }
 
 func (u User) String() string {
@@ -173,10 +186,12 @@ func (u User) String() string {
 	return b.String()
 }
 
+// Base URL for the Pocketsmith API
 const (
 	BaseURL = "https://api.pocketsmith.com/v2"
 )
 
+// Resource type for Pocketsmith HTTP responses
 const (
 	ResourceType = "application/json; charset=utf-8"
 )
