@@ -35,7 +35,7 @@ func TestGetAuthorisedUser(t *testing.T) {
 			User: User{
 				Name: "Monty Burns",
 			},
-			StatusCode: http.StatusForbidden,
+			StatusCode: http.StatusOK,
 		},
 		"UnHappyBadAPIKey": {
 			Path:       "/me",
