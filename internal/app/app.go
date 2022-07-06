@@ -66,10 +66,15 @@ func (c *Client) sendRequest(path string, method string, body io.Reader) (*http.
 	return resp, nil
 }
 
-// GetAuthorisedUser gets the authorised user of the Pocketsmith account
-func (c *Client) GetAuthorisedUser() (*User, error) {
+// GetUser gets the authorised user of the Pocketsmith account
+func (c *Client) GetUser(f bool) (*User, error) {
 	u := &User{}
-	path := "/me"
+	var path string
+	if f == true {
+		path = "/me"
+	} else {
+		path = "/users/" + c.User
+	}
 	resp, err := c.sendRequest(path, http.MethodGet, nil)
 	if err != nil {
 		return nil, fmt.Errorf("unable to send request: %w", err)

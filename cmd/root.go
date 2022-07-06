@@ -56,3 +56,11 @@ func init() {
 func printer(v interface{}) {
 	fmt.Println(v)
 }
+
+func boolFlagCheck(c *cobra.Command, flag string) (bool, error) {
+	f, err := c.Flags().GetBool(flag)
+	if err != nil {
+		return false, fmt.Errorf("unable to access %s flag for command %s: %w", flag, c.Name(), err)
+	}
+	return f, nil
+}

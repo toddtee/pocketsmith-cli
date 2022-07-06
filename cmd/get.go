@@ -12,6 +12,8 @@ import (
 	"github.com/toddtee/pocketsmith-cli/internal/app"
 )
 
+var authorised bool
+
 // getCmd represents the list command
 var getCmd = &cobra.Command{
 	Use:   "get", // Need to add a better  [-F file | -D dir]... [-f format] profile
@@ -19,15 +21,17 @@ var getCmd = &cobra.Command{
 	Long:  `prints some import information about the specified pocketsmith resource.`,
 }
 
-var getAuthorisedUserCmd = &cobra.Command{
+var getUserCmd = &cobra.Command{
 	Use:   "user", // Need to add a better  [-F file | -D dir]... [-f format] profile
 	Short: "retrieves the authorised user of the pocketsmith account",
 	Long:  `reveals who is the supreme overlord of the household finances.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		c := app.NewClient()
-		u, err := c.GetAuthorisedUser()
+		flag := "authorised"
+		b, _ := boolFlagCheck(cmd, flag)
+		u, err := c.GetUser(b)
 		if err != nil {
-			return fmt.Errorf("unable to get authorised user: %w", err)
+			return fmt.Errorf("unable to get user: %w", err)
 		}
 		printer(u)
 		return nil
@@ -35,5 +39,6 @@ var getAuthorisedUserCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.AddCommand(getAuthorisedUserCmd)
+	getCmd.AddCommand(getUserCmd)
+	getUserCmd.Flags().BoolVarP(&authorised, "authorised", "a", false, "authorised user of account")
 }

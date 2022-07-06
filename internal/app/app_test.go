@@ -9,14 +9,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetAuthorisedUser(t *testing.T) {
+func TestGetUser(t *testing.T) {
 	testCases := map[string]struct {
+		AuthUser   bool
+		UserID     string
 		Path       string
 		User       User
 		StatusCode int
 	}{
 		"HappyPath": {
-			Path: "/me",
+			AuthUser: false,
+			Path:     "/me",
+			User: User{
+				Name:  "Monty Burns",
+				Email: "mburns@springfieldnukepower.com",
+			},
+			StatusCode: http.StatusOK,
+		},
+		"HappyPathAuth": {
+			AuthUser: true,
 			User: User{
 				Name:  "Monty Burns",
 				Email: "mburns@springfieldnukepower.com",
@@ -24,21 +35,24 @@ func TestGetAuthorisedUser(t *testing.T) {
 			StatusCode: http.StatusOK,
 		},
 		"HappyPathNoName": {
-			Path: "/me",
+			AuthUser: false,
+			UserID:   "1234",
 			User: User{
 				Email: "mburns@springfieldnukepower.com",
 			},
 			StatusCode: http.StatusOK,
 		},
 		"HappyPathNoEmail": {
-			Path: "/me",
+			AuthUser: false,
+			UserID:   "1234",
 			User: User{
 				Name: "Monty Burns",
 			},
 			StatusCode: http.StatusOK,
 		},
 		"UnHappyBadAPIKey": {
-			Path:       "/me",
+			AuthUser:   false,
+			UserID:     "1234",
 			StatusCode: http.StatusForbidden,
 		},
 	}
@@ -46,9 +60,17 @@ func TestGetAuthorisedUser(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			// Create a test server
 			svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				var path string
 				rp := r.URL.Path
+				if tt.AuthUser == true {
+					path = "/me"
+				} else {
+					path = "/users/" + tt.UserID
+				}
 				// Check the path is as expected
-				if rp != tt.Path {
+				fmt.Println(path)
+				fmt.Println(rp)
+				if rp != path {
 					t.Errorf("Expected request path %v, got %v", tt.Path, rp)
 				}
 				pl := fmt.Sprintf("{\"name\":\"%s\", \"email\":\"%s\"}", tt.User.Name, tt.User.Email)
@@ -59,9 +81,10 @@ func TestGetAuthorisedUser(t *testing.T) {
 			}))
 			// Make a new client and override the BaseURL to be the test server's URL
 			c := NewClient()
+			c.User = tt.UserID
 			c.BaseURL = svr.URL
 			// Call the function under test
-			u, err := c.GetAuthorisedUser()
+			u, err := c.GetUser(tt.AuthUser)
 			defer svr.Close()
 
 			// StatusOK test asserts
