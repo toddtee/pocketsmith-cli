@@ -6,6 +6,16 @@ import (
 	"time"
 )
 
+// APIError is a custom error to raise when Pocketsmith API returns a non-200 response code.
+type APIError struct {
+	Message string
+}
+
+func (err *APIError) Error() string {
+	err.Message = "Bad Request: "
+	return err.Message
+}
+
 // Client for Pocketsmith API
 type Client struct {
 	BaseURL string

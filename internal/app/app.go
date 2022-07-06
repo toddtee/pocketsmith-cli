@@ -10,16 +10,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// APIError is a custom error to raise when Pocketsmith API returns a non-200 response code.
-type APIError struct {
-	Message string
-}
-
-func (err *APIError) Error() string {
-	err.Message = "Bad Request: "
-	return err.Message
-}
-
 // InitConfig sets up the configuration for the user
 func InitConfig() error {
 	if viper.GetString("config") != "" {
