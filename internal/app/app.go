@@ -10,6 +10,15 @@ import (
 	"github.com/spf13/viper"
 )
 
+type APIError struct {
+	Message string
+}
+
+func (err *APIError) Error() string {
+	err.Message = "Bad Request: "
+	return err.Message
+}
+
 // InitConfig sets up the configuration for the user
 func InitConfig() error {
 	if viper.GetString("config") != "" {
@@ -62,16 +71,25 @@ func (c *Client) GetAuthorisedUser() (*User, error) {
 	path := "/me"
 	resp, err := c.sendRequest(path, http.MethodGet, nil)
 	if err != nil {
-		return u, fmt.Errorf("unable to send request: %w", err)
+		return nil, fmt.Errorf("unable to send request: %w", err)
 	}
-	responseHandler(resp, u)
+	err = responseHandler(resp, u)
+	if err != nil {
+		return nil, fmt.Errorf("%w", err)
+	}
 	return u, nil
 }
 
-func responseHandler(resp *http.Response, v interface{}) {
+func responseHandler(resp *http.Response, v interface{}) error {
 	defer resp.Body.Close()
 	d := getBodyData(resp.Body)
-	unmarshal(d, v)
+	if resp.StatusCode < http.StatusBadRequest {
+		unmarshal(d, v)
+	} else {
+		err := APIError{}
+		return fmt.Errorf("%s%s", err.Error(), string(d))
+	}
+	return nil
 }
 
 func getBodyData(r io.Reader) (d []byte) {

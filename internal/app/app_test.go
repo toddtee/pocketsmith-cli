@@ -35,7 +35,11 @@ func TestGetAuthorisedUser(t *testing.T) {
 			User: User{
 				Name: "Monty Burns",
 			},
-			StatusCode: http.StatusOK,
+			StatusCode: http.StatusForbidden,
+		},
+		"UnHappyBadAPIKey": {
+			Path:       "/me",
+			StatusCode: http.StatusForbidden,
 		},
 	}
 	for name, tt := range testCases {
@@ -48,21 +52,29 @@ func TestGetAuthorisedUser(t *testing.T) {
 					t.Errorf("Expected request path %v, got %v", tt.Path, rp)
 				}
 				pl := fmt.Sprintf("{\"name\":\"%s\", \"email\":\"%s\"}", tt.User.Name, tt.User.Email)
-				// Write the response body
-				w.Write([]byte(pl))
 				// Write the response header
 				w.WriteHeader(tt.StatusCode)
+				// Write the response body
+				w.Write([]byte(pl))
 			}))
-
 			// Make a new client and override the BaseURL to be the test server's URL
 			c := NewClient()
 			c.BaseURL = svr.URL
 			// Call the function under test
-			u, _ := c.GetAuthorisedUser()
+			u, err := c.GetAuthorisedUser()
 			defer svr.Close()
 
-			assert.Equal(t, tt.User.Name, u.Name, "Name of User should match.")
-			assert.Equal(t, tt.User.Email, u.Email, "Email of User should match.")
+			// StatusOK test asserts
+			if tt.StatusCode == http.StatusOK {
+				assert.Equal(t, tt.User.Name, u.Name, "Name of User should match.")
+				assert.Equal(t, tt.User.Email, u.Email, "Email of User should match.")
+				assert.Equal(t, nil, err, "err should be nil")
+			}
+
+			// Status Not OK test asserts
+			if tt.StatusCode != http.StatusOK {
+				assert.NotEqual(t, nil, err, "err should not be nil")
+			}
 		})
 	}
 }
