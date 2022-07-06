@@ -67,10 +67,11 @@ func (c *Client) sendRequest(path string, method string, body io.Reader) (*http.
 }
 
 // GetUser gets the authorised user of the Pocketsmith account
-func (c *Client) GetUser(f bool) (*User, error) {
+func (c *Client) GetUser(auth bool) (*User, error) {
 	u := &User{}
 	var path string
-	if f == true {
+	// Check if authorised user flag was passed
+	if auth == true {
 		path = "/me"
 	} else {
 		path = "/users/" + c.User
